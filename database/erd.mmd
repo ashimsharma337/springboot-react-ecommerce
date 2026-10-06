@@ -1,0 +1,37 @@
+erDiagram
+    USER |o--o{ CART : contains
+    PRODUCT |o--o{ CART : selected_for
+    USER |o--o{ ORDERS : places
+
+    USER {
+        BIGINT user_id PK
+        VARCHAR username
+        VARCHAR email
+        VARCHAR password
+        VARCHAR role
+    }
+
+    PRODUCT {
+        BIGINT product_id PK
+        VARCHAR name
+        DOUBLE price
+        VARCHAR description
+        INT stock
+        VARCHAR category
+    }
+
+    CART {
+        BIGINT id PK
+        BIGINT user_id FK
+        BIGINT product_id FK
+        INT quantity
+        VARCHAR status
+    }
+
+    ORDERS {
+        BIGINT id PK
+        BIGINT user_id FK
+        DOUBLE total_price
+        DATETIME order_date
+        VARCHAR status
+    }
