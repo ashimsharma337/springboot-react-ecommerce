@@ -2,24 +2,29 @@
 
 This directory contains database reference artifacts for the Spring Boot backend:
 
-- [`schema.sql`](schema.sql): repeatable baseline DDL for a clean MySQL database.
+- [`schema.sql`](schema.sql): repeatable baseline DDL for a clean PostgreSQL database.
+- [`seed.sql`](seed.sql): repeatable sample electronics catalog, demo accounts, carts, and orders.
 - [`erd.mmd`](erd.mmd): Mermaid ER diagram source for the current JPA model.
 
 ## Current Configuration
 
-The backend connects to MySQL using `jdbc:mysql://localhost:3306/ecommerce-backend`. The local defaults in `EcommerceBackend/src/main/resources/application.properties` are username `root` and password `password`; override these for your machine rather than sharing real credentials.
+The backend connects to PostgreSQL using `jdbc:postgresql://localhost:5432/ecommerce_backend`. Hibernate uses the `ecommerce` schema, created by `schema.sql`. The local defaults in `EcommerceBackend/src/main/resources/application.properties` are username `postgres` and password `password`. Override them with the `DB_URL`, `DB_USERNAME`, and `DB_PASSWORD` environment variables for your machine; do not commit real credentials.
 
 The project currently uses `spring.jpa.hibernate.ddl-auto=update`. Hibernate may create or alter tables when the application starts, but this is not a versioned migration history. The DDL in this folder is a baseline/reference and should be reviewed against the live database before applying it to an existing environment.
 
 ## Fresh Database
 
-With MySQL running, execute the script using the MySQL client:
+With PostgreSQL running, create the database and apply the baseline schema. The `createdb` command creates the database; `schema.sql` creates the `ecommerce` schema and its tables:
 
 ```sh
-mysql -u root -p < database/schema.sql
+createdb -U postgres ecommerce_backend
+psql -U postgres -d ecommerce_backend -f database/schema.sql
+psql -U postgres -d ecommerce_backend -f database/seed.sql
 ```
 
-Then make sure the datasource settings in `EcommerceBackend/src/main/resources/application.properties` match the local MySQL username and password. Start the backend from the repository root with:
+The seed script adds 8 demo users, 30 electronics products, 12 active cart entries, and 12 sample orders. It can be run again without duplicating those rows and refreshes passwords for its exact demo username/email pairs. All demo accounts share the password `password`; for example, log in as `alexchen` or `techadmin`. These accounts are for local development only; change or remove them before using the database outside local development.
+
+Then make sure the datasource environment variables match your PostgreSQL connection. Start the backend from the repository root with:
 
 ```sh
 cd EcommerceBackend
@@ -28,7 +33,7 @@ sh ./mvnw spring-boot:run
 
 ## Model Notes
 
-- `user`, `product`, `cart`, and `orders` are mapped from the JPA entity classes.
+- `app_user`, `product`, `cart`, and `orders` are mapped from the JPA entity classes in the `ecommerce` schema.
 - `cart.user_id`, `cart.product_id`, and `orders.user_id` are nullable because the current `@ManyToOne` mappings do not require a relationship.
 - String columns use JPA's default `VARCHAR(255)` length; numeric and date types follow the entity field types.
 - No uniqueness constraints, cascade rules, or delete actions are declared in the entity model. In particular, `email` is not currently unique at the database level.

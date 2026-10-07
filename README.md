@@ -12,7 +12,7 @@ This project is an e-commerce web application built with a Java Spring Boot back
 - Java: Core backend language.
 - Spring Boot: Framework for building microservices and RESTful APIs.
 - JWT: JSON Web Tokens for secure authentication.
-- MySQL: Relational database for storing user and product data.
+- PostgreSQL: Relational database for storing user and product data.
 ### Frontend
 - React.js: JavaScript library for building the user interface.
 - React Bootstrap: Provides responsive and accessible UI components.
@@ -26,7 +26,8 @@ git clone https://github.com/username/my-ecommerce-app.git
 
 - Navigate to the backend directory.
 
-- Update application.properties with your database details.
+- Install and start PostgreSQL, create the `ecommerce_backend` database, and follow the schema setup in [`database/README.md`](database/README.md).
+- Set `DB_URL`, `DB_USERNAME`, and `DB_PASSWORD` if your local PostgreSQL connection differs from the defaults.
 
 - Run the application:
 ```bash 
