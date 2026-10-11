@@ -10,5 +10,5 @@ public interface ICartService {
 	List<Cart> getCartItemsByUserId(Long userId);
 	Cart updateCartItem(Long cartId, Cart updatedCart);
 	String removeCartItem(Long cartId);
-	
+
 }

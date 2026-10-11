@@ -3,7 +3,6 @@ package com.ashim.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ashim.dao.IProductRepository;
@@ -12,10 +11,9 @@ import com.ashim.exceptions.ProductNotFoundException;
 
 @Service
 public class ProductServiceImpl implements IProductService {
-	
+
 	private final IProductRepository repo;
-	
-	@Autowired
+
 	public ProductServiceImpl(IProductRepository repo) {
 		this.repo = repo;
 	}
@@ -42,19 +40,19 @@ public class ProductServiceImpl implements IProductService {
 
 	@Override
 	public Product updateProduct(Product updatedProduct) {
-		
+
 		Long productId = updatedProduct.getId();
-		
+
 		Optional<Product> optional = repo.findById(productId);
 		if(optional.isPresent()) {
 			Product existingProduct = optional.get();
-			
+
 			existingProduct.setName(updatedProduct.getName());
 			existingProduct.setPrice(updatedProduct.getPrice());
 			existingProduct.setDescription(updatedProduct.getDescription());
 			existingProduct.setStock(updatedProduct.getStock());
 			existingProduct.setCategory(updatedProduct.getCategory());
-			
+
 			return repo.save(existingProduct);
 		} else {
 			throw new ProductNotFoundException("Product with ID "+productId+" not found!");

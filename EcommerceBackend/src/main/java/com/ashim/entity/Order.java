@@ -16,21 +16,21 @@ import lombok.Data;
 @Entity
 @Table(name="orders")
 public class Order {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
-	
+
 	@Column(name = "total_price")
 	private Double totalPrice;
-    
+
 	@Column(name = "order_date")
 	private LocalDateTime orderDate;
-	
+
 	@Column(name = "status")
 	private String status;
 
