@@ -1,0 +1,32 @@
+meta {
+  name: Update Order
+  type: http
+  seq: 19
+}
+
+put {
+  url: {{baseUrl}}/api/orders/1
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "id": 1,
+    "user": {
+      "id": 1,
+      "username": "alexchen",
+      "email": "alexchen@example.com",
+      "password": "password",
+      "role": "USER"
+    },
+    "totalPrice": 399.99,
+    "orderDate": "2026-10-11T12:15:00",
+    "status": "CONFIRMED"
+  }
+}
+
+headers {
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+}

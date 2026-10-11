@@ -1,0 +1,26 @@
+meta {
+  name: Update User
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{baseUrl}}/api/users/1
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "id": 1,
+    "username": "alexchen_updated",
+    "email": "alexchen.updated@example.com",
+    "password": "password",
+    "role": "USER"
+  }
+}
+
+headers {
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+}
