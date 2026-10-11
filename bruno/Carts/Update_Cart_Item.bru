@@ -1,0 +1,30 @@
+meta {
+  name: Update Cart Item
+  type: http
+  seq: 14
+}
+
+put {
+  url: {{baseUrl}}/api/carts/1
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "id": 1,
+    "user": {
+      "id": 1
+    },
+    "product": {
+      "id": 1
+    },
+    "quantity": 5,
+    "status": "ACTIVE"
+  }
+}
+
+headers {
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+}

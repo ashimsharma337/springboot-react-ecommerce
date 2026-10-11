@@ -1,0 +1,29 @@
+meta {
+  name: Add To Cart
+  type: http
+  seq: 13
+}
+
+post {
+  url: {{baseUrl}}/api/carts
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "user": {
+      "id": 1
+    },
+    "product": {
+      "id": 1
+    },
+    "quantity": 2,
+    "status": "ACTIVE"
+  }
+}
+
+headers {
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+}

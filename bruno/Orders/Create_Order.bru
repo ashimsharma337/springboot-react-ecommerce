@@ -1,0 +1,31 @@
+meta {
+  name: Create Order
+  type: http
+  seq: 18
+}
+
+post {
+  url: {{baseUrl}}/api/orders
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "user": {
+      "id": 1,
+      "username": "alexchen",
+      "email": "alexchen@example.com",
+      "password": "password",
+      "role": "USER"
+    },
+    "totalPrice": 299.99,
+    "orderDate": "2026-10-11T12:00:00",
+    "status": "PENDING"
+  }
+}
+
+headers {
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+}

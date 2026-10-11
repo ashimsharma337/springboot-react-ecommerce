@@ -1,0 +1,27 @@
+meta {
+  name: Update Product
+  type: http
+  seq: 10
+}
+
+put {
+  url: {{baseUrl}}/api/products/1
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "id": 1,
+    "name": "Updated Laptop",
+    "price": 1299.99,
+    "description": "Updated description for the laptop",
+    "stock": 25,
+    "category": "Electronics"
+  }
+}
+
+headers {
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+}

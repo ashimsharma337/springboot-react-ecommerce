@@ -1,0 +1,26 @@
+meta {
+  name: Create Product
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/api/products
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Wireless Mouse",
+    "price": 49.99,
+    "description": "Ergonomic wireless mouse for office use",
+    "stock": 120,
+    "category": "Accessories"
+  }
+}
+
+headers {
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+}
