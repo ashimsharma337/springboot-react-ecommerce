@@ -3,7 +3,6 @@ package com.ashim.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,22 +15,20 @@ import com.ashim.exceptions.UserNotFoundException;
 
 @Service
 public class UserServiceImpl implements IUserService {
-    
+
 	private final IUserRepository repo;
-	
-	private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
-	
-	@Autowired 
-	private AuthenticationManager authManager;
-	
-	@Autowired
-	private JWTService jwtService;
-	
-	@Autowired
-	public UserServiceImpl(IUserRepository repo) {
+	private final BCryptPasswordEncoder encoder;
+	private final AuthenticationManager authManager;
+	private final JWTService jwtService;
+
+	public UserServiceImpl(IUserRepository repo, AuthenticationManager authManager, JWTService jwtService,
+			BCryptPasswordEncoder encoder) {
 		this.repo = repo;
+		this.authManager = authManager;
+		this.jwtService = jwtService;
+		this.encoder = encoder;
 	}
-	
+
 	@Override
 	public User createUser(User newUser) {
 		newUser.setPassword(encoder.encode(newUser.getPassword()));
@@ -55,24 +52,24 @@ public class UserServiceImpl implements IUserService {
 
 	@Override
 	public User updateUser(User updatedUser) {
-		
+
 		Long UserId = updatedUser.getId();
-		
+
 		Optional<User> optional = repo.findById(UserId);
 		if(optional.isPresent()) {
-			
+
 			User existingUser = optional.get();
-			
+
 			existingUser.setUsername(updatedUser.getUsername());
 			existingUser.setEmail(updatedUser.getEmail());
 			existingUser.setPassword(updatedUser.getPassword());
 			existingUser.setRole(updatedUser.getRole());
-			
-			return repo.save(existingUser); 
+
+			return repo.save(existingUser);
 		} else {
 			throw new UserNotFoundException("User with Id "+UserId+" not found");
 		}
-		
+
 	}
 
 	@Override
@@ -88,10 +85,11 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	public String verify(User user) {
-		Authentication authentication = 
+		Authentication authentication =
 				authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
-		if(authentication.isAuthenticated())
+		if(authentication.isAuthenticated()) {
 			return jwtService.generateToken(user.getUsername());
+		}
 		return "Login fail";
 	}
 
