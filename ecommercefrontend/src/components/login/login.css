@@ -1,31 +1,47 @@
-
 .custom-modal .modal-content {
-    background-color: #2F4F4F; 
-    color: #ffffff; 
+  border: 1px solid #c3c6d7;
+  border-radius: 5px;
+  background-color: #ffffff;
+  color: #0b1c30;
+}
+
+.custom-modal .modal-header {
+  border-bottom-color: #c3c6d7;
+}
+
+.custom-modal .modal-title {
+  font-family: 'Hanken Grotesk', 'Arial', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.custom-modal .form-control {
+  min-height: 42px;
 }
 
 .login-button {
-    width: 100%; 
-    background-color: #3d5a79; 
-    border: none; 
-    margin-top: 10px;
+  width: 100%;
+  margin-top: 14px;
+  border: none;
+  background-color: #004ac6;
 }
 
-.login-button:hover {
-    background-color: #7b838b; 
+.login-button:hover,
+.login-button:focus {
+  background-color: #003ea8;
 }
 
-.signup-label {
-    display: block; 
-    margin-top: 10px; 
+.signup-lable {
+  display: block;
+  margin-top: 14px;
+  color: #434655;
 }
 
 .signup-link {
-    color: #6da7e6; 
-    text-decoration: underline; 
-    font-style: italic;
+  color: #004ac6;
+  text-decoration: underline;
 }
 
 .signup-link:hover {
-    color: #add8e6; 
+  color: #003ea8;
 }
