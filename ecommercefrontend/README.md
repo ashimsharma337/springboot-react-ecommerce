@@ -6,19 +6,20 @@ For the overall architecture and instructions for running both applications toge
 
 ## Current functionality
 
-The current UI is an initial application foundation:
-
 - `src/index.tsx` mounts the React application into the root HTML element.
-- `src/App.tsx` imports Bootstrap styling and renders the main navigation.
-- `src/components/common/navbar/mainNav.tsx` renders navigation links, a search field, and login/logout UI state.
-- `src/components/login/login.tsx` renders the login modal and submits credentials using Axios.
-- The login component stores the returned JWT in browser `localStorage`; the navigation checks for a stored token on startup and removes it on logout.
+- `src/App.tsx` composes the responsive NEXUS storefront and shares cart, search, and authentication state.
+- `src/components/landing/` contains the reusable hero, category grid, product cards, engineering story, and footer.
+- `src/data/storefront.ts` provides the typed category and product catalog shown on the landing page.
+- The navigation filters catalog products as the visitor types, supports a `⌘K` / `Ctrl+K` search shortcut, and exposes responsive category links.
+- Product quick-add and the flagship CTA update a demo cart count and show an accessible confirmation toast. The keynote and newsletter interactions are frontend presentation examples; they do not call backend endpoints.
+- `src/components/login/login.tsx` renders the login modal and submits credentials using Axios. On successful login, the returned JWT is stored in browser `localStorage`; sign-out removes it.
+- `src/styles/` contains the shared Sass color and typography tokens plus responsive storefront styles. Geist and Hanken Grotesk typefaces and Material Symbols are loaded from Google Fonts.
 
 The backend has additional product, cart, order, and user endpoints. Not all of those API capabilities currently have corresponding frontend screens. Use the repository's [Bruno](../bruno/) or [Postman](../postman/) collections to test backend APIs independently.
 
 ## Frontend request and authentication flow
 
-1. The React app renders the navigation and login modal.
+1. The React app renders the storefront, navigation, and login modal.
 2. When the login form is submitted, the login component sends the username and password as JSON to `POST http://localhost:8000/api/users/login` using Axios.
 3. The backend returns a JWT when authentication succeeds.
 4. The frontend stores the response token in `localStorage` and updates the navigation's logged-in state.
