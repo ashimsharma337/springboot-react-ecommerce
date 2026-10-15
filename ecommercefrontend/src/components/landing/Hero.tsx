@@ -1,11 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { FaArrowRight, FaPlayCircle } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
-interface HeroProps {
-  onAddToCart: () => void;
-}
-
-function Hero({ onAddToCart }: HeroProps) {
+function Hero() {
   const [showKeynote, setShowKeynote] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -83,9 +80,9 @@ function Hero({ onAddToCart }: HeroProps) {
           </div>
         </div>
         <div className="hero__actions">
-          <a className="button button--dark" href="#featured" onClick={onAddToCart}>
+          <Link className="button button--dark" to="/products/studio-one-headphone">
             Explore Studio One <FaArrowRight aria-hidden="true" />
-          </a>
+          </Link>
           <button className="button button--soft" onClick={() => setShowKeynote(true)}>
             <FaPlayCircle aria-hidden="true" /> Watch 60s Keynote <span className="video-tag">4K HDR</span>
           </button>

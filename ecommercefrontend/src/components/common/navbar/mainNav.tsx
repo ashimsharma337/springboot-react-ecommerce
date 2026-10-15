@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { FaBars, FaHeart, FaSearch, FaShoppingBag, FaTimes, FaUser } from 'react-icons/fa';
+import { Link, useLocation } from 'react-router-dom';
 import './mainNav.scss';
 
 interface MainNavProps {
@@ -13,6 +14,7 @@ interface MainNavProps {
 function MainNav({ cartCount, isAuthenticated, onLogin, onLogout, onSearch }: MainNavProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
+  const location = useLocation();
 
   useEffect(() => {
     const handleShortcut = (event: KeyboardEvent) => {
@@ -36,13 +38,13 @@ function MainNav({ cartCount, isAuthenticated, onLogin, onLogout, onSearch }: Ma
         <span>30-day trial guarantee</span>
       </div>
       <div className="nav-shell">
-        <a className="brand" href="#top" aria-label="NEXUS home">NEXUS<span>®</span></a>
+        <Link className="brand" to="/" aria-label="NEXUS home">NEXUS<span>®</span></Link>
         <nav className={`primary-nav${menuOpen ? ' primary-nav--open' : ''}`} aria-label="Main navigation">
-          <a className="primary-nav__active" href="#top" onClick={closeMenu}>Home</a>
-          <a href="#categories" onClick={closeMenu}>Audio &amp; Sound</a>
-          <a href="#categories" onClick={closeMenu}>Computing</a>
-          <a href="#categories" onClick={closeMenu}>Displays</a>
-          <a href="#categories" onClick={closeMenu}>Accessories</a>
+          <Link className={location.pathname === '/' ? 'primary-nav__active' : ''} to="/" onClick={closeMenu}>Home</Link>
+          <Link to="/#categories" onClick={closeMenu}>Audio &amp; Sound</Link>
+          <Link to="/#categories" onClick={closeMenu}>Computing</Link>
+          <Link to="/#categories" onClick={closeMenu}>Displays</Link>
+          <Link to="/#categories" onClick={closeMenu}>Accessories</Link>
         </nav>
         <div className="nav-actions">
           <label className="search-field">
@@ -56,17 +58,17 @@ function MainNav({ cartCount, isAuthenticated, onLogin, onLogout, onSearch }: Ma
             />
             <kbd>⌘K</kbd>
           </label>
-          <a className="nav-icon nav-icon--wishlist" href="#featured" aria-label="Wishlist, 2 saved items">
+          <Link className="nav-icon nav-icon--wishlist" to="/#featured" aria-label="Wishlist, 2 saved items">
             <FaHeart aria-hidden="true" /><span className="nav-count">2</span>
-          </a>
-          <a
+          </Link>
+          <Link
             className="cart-link"
-            href="#featured"
+            to="/#featured"
             aria-label={`Shopping bag, ${cartCount} ${cartCount === 1 ? 'item' : 'items'}`}
           >
             <FaShoppingBag aria-hidden="true" /><span className="cart-link__label">Bag</span>
             <span className="cart-link__count">{cartCount}</span>
-          </a>
+          </Link>
           {isAuthenticated ? (
             <button className="account-button" onClick={onLogout} aria-label="Log out">
               <FaUser aria-hidden="true" /><span>Log out</span>

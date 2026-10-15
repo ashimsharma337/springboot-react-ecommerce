@@ -7,9 +7,12 @@ For the overall architecture and instructions for running both applications toge
 ## Current functionality
 
 - `src/index.tsx` mounts the React application into the root HTML element.
-- `src/App.tsx` composes the responsive NEXUS storefront and shares cart, search, and authentication state.
+- `src/App.tsx` composes the responsive NEXUS storefront and shares cart, search, and authentication state across the home and product routes.
 - `src/components/landing/` contains the reusable hero, category grid, product cards, engineering story, and footer.
-- `src/data/storefront.ts` provides the typed category and product catalog shown on the landing page.
+- `src/components/product-detail/` contains the reusable detail-page gallery, purchase controls, and keyboard-accessible information tabs.
+- `src/data/storefront.ts` provides the typed category and product catalog; `src/data/studioOneDetail.ts` holds the product-specific gallery, specifications, and review content.
+- React Router renders the home page at `/` and Studio One detail page at `/products/studio-one-headphone`.
+- The product detail view includes selectable gallery images, finishes, optional flight-shell bundle, quantity selection, product specifications, acoustic information, box contents, and sample reviews. Add-to-bag updates the shared demo cart; checkout is not connected.
 - The navigation filters catalog products as the visitor types, supports a `⌘K` / `Ctrl+K` search shortcut, and exposes responsive category links.
 - Product quick-add and the flagship CTA update a demo cart count and show an accessible confirmation toast. The keynote and newsletter interactions are frontend presentation examples; they do not call backend endpoints.
 - `src/components/login/login.tsx` renders the login modal and submits credentials using Axios. On successful login, the returned JWT is stored in browser `localStorage`; sign-out removes it.
