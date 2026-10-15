@@ -18,6 +18,8 @@ testing all contribute.
 - The keynote dialog receives initial focus, supports Escape to close, cycles
   Tab focus through its controls, and returns focus to the invoking control
   when closed.
+- The product-detail information tabs expose tab, tab-list, and tab-panel
+  relationships and support arrow-key navigation as well as Home and End.
 - The search field supports the `Ctrl+K` and `⌘K` shortcuts. The shortcut
   supplements rather than replaces its visible, labeled input.
 

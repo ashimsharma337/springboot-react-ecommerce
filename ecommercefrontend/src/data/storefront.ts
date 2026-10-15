@@ -1,4 +1,5 @@
 export interface StoreProduct {
+  slug?: string;
   name: string;
   category: string;
   description: string;
@@ -14,6 +15,7 @@ export interface StoreProduct {
 
 export const products: StoreProduct[] = [
   {
+    slug: 'studio-one-headphone',
     name: 'Studio One Headphone',
     category: 'Audio & Sound',
     description:

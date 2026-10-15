@@ -1,10 +1,13 @@
 import { FaArrowRight, FaCartPlus } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import type { StoreProduct } from '../../data/storefront';
 
 interface ProductGridProps {
   products: StoreProduct[];
   searchTerm: string;
   onAddToCart: (productName: string) => void;
+  eyebrow?: string;
+  title?: string;
 }
 
 interface ProductCardProps {
@@ -27,7 +30,9 @@ function ProductCard({ product, onAddToCart }: ProductCardProps) {
             ★ {product.rating} <span>({product.reviews})</span>
           </span>
         </div>
-        <h3>{product.name}</h3>
+        <h3>
+          {product.slug ? <Link to={`/products/${product.slug}`}>{product.name}</Link> : product.name}
+        </h3>
         <p>{product.description}</p>
         <div className="product-card__purchase">
           <div><small>MSRP</small><strong>${product.price.toFixed(2)}</strong></div>
@@ -40,7 +45,13 @@ function ProductCard({ product, onAddToCart }: ProductCardProps) {
   );
 }
 
-function ProductGrid({ products, searchTerm, onAddToCart }: ProductGridProps) {
+function ProductGrid({
+  products,
+  searchTerm,
+  onAddToCart,
+  eyebrow = '02 / THE NEXUS EDIT',
+  title = 'Curated hardware bench',
+}: ProductGridProps) {
   const normalizedSearch = searchTerm.trim().toLocaleLowerCase();
   const visibleProducts = products.filter((product) =>
     `${product.name} ${product.category} ${product.description} ${product.specs}`
@@ -53,8 +64,8 @@ function ProductGrid({ products, searchTerm, onAddToCart }: ProductGridProps) {
       <div className="section-wrap">
         <div className="section-heading section-heading--products">
           <div>
-            <p className="section-kicker">02 / THE NEXUS EDIT</p>
-            <h2>Curated hardware bench</h2>
+            <p className="section-kicker">{eyebrow}</p>
+            <h2>{title}</h2>
           </div>
           <a className="text-link" href="#categories">View all hardware <FaArrowRight aria-hidden="true" /></a>
         </div>
