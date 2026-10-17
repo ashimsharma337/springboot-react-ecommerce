@@ -69,7 +69,7 @@ function MainNav({ cartCount, isAuthenticated, onLogin, onLogout, onSearch }: Ma
           </Link>
           <Link
             className="cart-link"
-            to="/#featured"
+            to="/cart"
             aria-label={`Shopping bag, ${cartCount} ${cartCount === 1 ? 'item' : 'items'}`}
           >
             <FaShoppingBag aria-hidden="true" /><span className="cart-link__label">Bag</span>

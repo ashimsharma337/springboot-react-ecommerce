@@ -10,7 +10,11 @@ import ProductGrid from './components/landing/ProductGrid';
 import SiteFooter from './components/landing/SiteFooter';
 import ProductDetail from './components/product-detail/ProductDetail';
 import ProductListingPage from './components/product-listing/ProductListingPage';
+import CartPage from './components/cart/CartPage';
+import CheckoutPage from './components/cart/CheckoutPage';
 import { products } from './data/storefront';
+import type { StoreProduct } from './data/storefront';
+import { useCart } from './hooks/useCart';
 import './styles/main.scss';
 
 function App() {
@@ -20,7 +24,7 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
     () => Boolean(localStorage.getItem('token'))
   );
-  const [cartCount, setCartCount] = useState(0);
+  const cart = useCart();
   const [searchTerm, setSearchTerm] = useState(
     () => new URLSearchParams(window.location.search).get('search') ?? ''
   );
@@ -29,9 +33,13 @@ function App() {
   useEffect(() => {
     document.title = location.pathname === '/products'
       ? 'Audio & Acoustics — NEXUS'
-      : location.pathname.startsWith('/products/')
-        ? 'NEXUS Studio One — Minimalist Electronics'
-        : 'NEXUS — Minimalist Electronics';
+      : location.pathname === '/cart'
+        ? 'Your Bag — NEXUS'
+        : location.pathname === '/checkout'
+          ? 'Secure Checkout — NEXUS'
+          : location.pathname.startsWith('/products/')
+            ? 'NEXUS Studio One — Minimalist Electronics'
+            : 'NEXUS — Minimalist Electronics';
 
     if (location.hash) {
       const frame = requestAnimationFrame(() => {
@@ -42,9 +50,9 @@ function App() {
     window.scrollTo(0, 0);
   }, [location.pathname, location.hash]);
 
-  const addToCart = (productName: string, quantity = 1) => {
-    setCartCount((count) => count + quantity);
-    setToastMessage(`${quantity} × ${productName} added to your bag`);
+  const addToCart = (product: StoreProduct, quantity = 1, variant = '') => {
+    cart.addItem(product, quantity, variant);
+    setToastMessage(`${quantity} × ${product.name} added to your bag`);
     window.setTimeout(() => setToastMessage(''), 3200);
   };
 
@@ -70,7 +78,7 @@ function App() {
   return (
     <>
       <MainNav
-        cartCount={cartCount}
+        cartCount={cart.itemCount}
         isAuthenticated={isAuthenticated}
         onLogin={() => setShowLogin(true)}
         onLogout={() => {
@@ -108,9 +116,14 @@ function App() {
             />
           }
         />
+        <Route path="/cart" element={<CartPage onAddToCart={addToCart} />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <SiteFooter />
+      {cart.storageError && (
+        <p className="cart-storage-warning" role="alert">{cart.storageError}</p>
+      )}
       <div
         className={`cart-toast${toastMessage ? ' cart-toast--visible' : ''}`}
         role="status"

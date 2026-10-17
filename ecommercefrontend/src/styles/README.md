@@ -25,6 +25,13 @@ testing all contribute.
   while view toggles and wishlist buttons expose their pressed state.
 - Listing filters, sorting, layout, and pagination are represented in the URL,
   allowing the current result set to be shared and revisited.
+- Cart quantity steppers and remove actions have item-specific accessible
+  names, and checkout fields use native labels, autocomplete hints, and required
+  constraints. The local checkout preview clearly states that it does not
+  collect payment details or submit an order.
+- Cart contents persist in browser storage. If reading or writing the saved
+  cart fails, the interface displays an alert instead of silently claiming the
+  cart was saved.
 - The search field supports the `Ctrl+K` and `⌘K` shortcuts. The shortcut
   supplements rather than replaces its visible, labeled input.
 

@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { FaApple, FaInfoCircle, FaShoppingBag } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import type { StoreProduct } from '../../data/storefront';
 
 interface ProductPurchasePanelProps {
-  onAddToCart: (productName: string, quantity?: number) => void;
+  product: StoreProduct;
+  onAddToCart: (product: StoreProduct, quantity?: number, variant?: string) => void;
 }
 
 const finishes = [
@@ -12,7 +14,7 @@ const finishes = [
   { name: 'Midnight Ceramic', description: 'Ultra-deep navy with pearl coat', color: '#263454' },
 ];
 
-function ProductPurchasePanel({ onAddToCart }: ProductPurchasePanelProps) {
+function ProductPurchasePanel({ product, onAddToCart }: ProductPurchasePanelProps) {
   const [finish, setFinish] = useState(finishes[0]);
   const [includeCase, setIncludeCase] = useState(false);
   const [quantity, setQuantity] = useState(1);
@@ -99,7 +101,11 @@ function ProductPurchasePanel({ onAddToCart }: ProductPurchasePanelProps) {
         <button
           className="button button--dark pdp-actions__add"
           type="button"
-          onClick={() => onAddToCart(`NEXUS Studio One — ${finish.name}${includeCase ? ' with Flight Shell' : ''}`, quantity)}
+          onClick={() => onAddToCart(
+            { ...product, name: 'NEXUS Studio One', price: unitPrice },
+            quantity,
+            `${finish.name}${includeCase ? ' with Flight Shell' : ''}`
+          )}
         >
           <FaShoppingBag aria-hidden="true" /> Add to Bag — ${total.toFixed(2)} USD
         </button>
