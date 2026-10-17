@@ -20,6 +20,11 @@ testing all contribute.
   when closed.
 - The product-detail information tabs expose tab, tab-list, and tab-panel
   relationships and support arrow-key navigation as well as Home and End.
+- Product-listing filters are grouped with fieldset/legend labels, use native
+  controls, and expose their current state. Result-count changes are announced,
+  while view toggles and wishlist buttons expose their pressed state.
+- Listing filters, sorting, layout, and pagination are represented in the URL,
+  allowing the current result set to be shared and revisited.
 - The search field supports the `Ctrl+K` and `⌘K` shortcuts. The shortcut
   supplements rather than replaces its visible, labeled input.
 

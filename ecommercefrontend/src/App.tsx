@@ -9,6 +9,7 @@ import Hero from './components/landing/Hero';
 import ProductGrid from './components/landing/ProductGrid';
 import SiteFooter from './components/landing/SiteFooter';
 import ProductDetail from './components/product-detail/ProductDetail';
+import ProductListingPage from './components/product-listing/ProductListingPage';
 import { products } from './data/storefront';
 import './styles/main.scss';
 
@@ -26,9 +27,11 @@ function App() {
   const [toastMessage, setToastMessage] = useState('');
 
   useEffect(() => {
-    document.title = location.pathname.startsWith('/products/')
-      ? 'NEXUS Studio One — Minimalist Electronics'
-      : 'NEXUS — Minimalist Electronics';
+    document.title = location.pathname === '/products'
+      ? 'Audio & Acoustics — NEXUS'
+      : location.pathname.startsWith('/products/')
+        ? 'NEXUS Studio One — Minimalist Electronics'
+        : 'NEXUS — Minimalist Electronics';
 
     if (location.hash) {
       const frame = requestAnimationFrame(() => {
@@ -47,8 +50,15 @@ function App() {
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
-    if (location.pathname !== '/') {
-      navigate(value ? `/?search=${encodeURIComponent(value)}#featured` : '/');
+    if (location.pathname === '/products') {
+      const nextParams = new URLSearchParams(location.search);
+      if (value.trim()) nextParams.set('search', value);
+      else nextParams.delete('search');
+      nextParams.delete('page');
+      const query = nextParams.toString();
+      navigate(`/products${query ? `?${query}` : ''}`, { replace: true });
+    } else if (location.pathname !== '/') {
+      navigate(value ? `/products?search=${encodeURIComponent(value)}` : '/products');
     }
   };
 
@@ -84,6 +94,10 @@ function App() {
               <BrandStory />
             </main>
           }
+        />
+        <Route
+          path="/products"
+          element={<ProductListingPage onAddToCart={addToCart} />}
         />
         <Route
           path="/products/studio-one-headphone"

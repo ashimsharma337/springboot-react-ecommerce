@@ -27,6 +27,12 @@ function MainNav({ cartCount, isAuthenticated, onLogin, onLogout, onSearch }: Ma
     return () => window.removeEventListener('keydown', handleShortcut);
   }, []);
 
+  useEffect(() => {
+    if (location.pathname === '/products' && searchRef.current) {
+      searchRef.current.value = new URLSearchParams(location.search).get('search') ?? '';
+    }
+  }, [location.pathname, location.search]);
+
   const closeMenu = () => setMenuOpen(false);
 
   return (
@@ -41,7 +47,7 @@ function MainNav({ cartCount, isAuthenticated, onLogin, onLogout, onSearch }: Ma
         <Link className="brand" to="/" aria-label="NEXUS home">NEXUS<span>®</span></Link>
         <nav className={`primary-nav${menuOpen ? ' primary-nav--open' : ''}`} aria-label="Main navigation">
           <Link className={location.pathname === '/' ? 'primary-nav__active' : ''} to="/" onClick={closeMenu}>Home</Link>
-          <Link to="/#categories" onClick={closeMenu}>Audio &amp; Sound</Link>
+          <Link className={location.pathname === '/products' ? 'primary-nav__active' : ''} to="/products" onClick={closeMenu}>Audio &amp; Sound</Link>
           <Link to="/#categories" onClick={closeMenu}>Computing</Link>
           <Link to="/#categories" onClick={closeMenu}>Displays</Link>
           <Link to="/#categories" onClick={closeMenu}>Accessories</Link>
