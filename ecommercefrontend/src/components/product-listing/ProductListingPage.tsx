@@ -7,11 +7,12 @@ import ListingToolbar from './ListingToolbar';
 import ProductFilters from './ProductFilters';
 import ProductPagination from './ProductPagination';
 import { audioProducts } from '../../data/audioCatalog';
+import type { StoreProduct } from '../../data/storefront';
 import { useProductListing } from '../../hooks/useProductListing';
 import './product-listing.scss';
 
 interface ProductListingPageProps {
-  onAddToCart: (productName: string) => void;
+  onAddToCart: (product: StoreProduct, quantity?: number, variant?: string) => void;
 }
 
 function ProductListingPage({ onAddToCart }: ProductListingPageProps) {

@@ -9,7 +9,7 @@ import './product-detail.scss';
 
 interface ProductDetailProps {
   product: StoreProduct;
-  onAddToCart: (productName: string, quantity?: number) => void;
+  onAddToCart: (product: StoreProduct, quantity?: number, variant?: string) => void;
 }
 
 function ProductDetail({ product, onAddToCart }: ProductDetailProps) {
@@ -25,7 +25,7 @@ function ProductDetail({ product, onAddToCart }: ProductDetailProps) {
       <main className="pdp-main">
         <section className="pdp section-wrap" aria-label={`${product.name} product details`}>
           <ProductGallery />
-          <ProductPurchasePanel onAddToCart={onAddToCart} />
+          <ProductPurchasePanel product={product} onAddToCart={onAddToCart} />
         </section>
         <div id="pdp-information">
           <ProductInformation />

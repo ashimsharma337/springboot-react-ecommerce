@@ -5,14 +5,14 @@ import type { StoreProduct } from '../../data/storefront';
 interface ProductGridProps {
   products: StoreProduct[];
   searchTerm: string;
-  onAddToCart: (productName: string) => void;
+  onAddToCart: (product: StoreProduct, quantity?: number, variant?: string) => void;
   eyebrow?: string;
   title?: string;
 }
 
 export interface ProductCardProps {
   product: StoreProduct;
-  onAddToCart: (productName: string) => void;
+  onAddToCart: (product: StoreProduct, quantity?: number, variant?: string) => void;
   isFavorite?: boolean;
   onToggleFavorite?: (productName: string) => void;
   view?: 'grid' | 'list';
@@ -56,7 +56,7 @@ export function ProductCard({
         <p>{product.description}</p>
         <div className="product-card__purchase">
           <div><small>MSRP</small><strong>${product.price.toFixed(2)}</strong></div>
-          <button className="button button--quick-add" type="button" onClick={() => onAddToCart(product.name)}>
+          <button className="button button--quick-add" type="button" onClick={() => onAddToCart(product)}>
             <FaCartPlus aria-hidden="true" /> Quick Add
           </button>
         </div>
