@@ -1,5 +1,6 @@
 package com.ashim.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -26,7 +27,7 @@ public class Order {
 	private User user;
 
 	@Column(name = "total_price")
-	private Double totalPrice;
+	private BigDecimal totalPrice;
 
 	@Column(name = "order_date")
 	private LocalDateTime orderDate;
