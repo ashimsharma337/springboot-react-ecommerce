@@ -1,37 +1,134 @@
 erDiagram
-    USER |o--o{ CART : contains
+    APP_USER |o--o{ CART : owns
     PRODUCT |o--o{ CART : selected_for
-    USER |o--o{ ORDERS : places
+    APP_USER |o--o{ ORDERS : places
+    APP_USER |o--o{ PRODUCT_REVIEW : writes
+    PRODUCT ||--o{ PRODUCT_REVIEW : receives
+    PRODUCT ||--o{ PRODUCT_GALLERY : displays
+    PRODUCT ||--o{ PRODUCT_SPECIFICATION_GROUP : describes
+    PRODUCT_SPECIFICATION_GROUP ||--o{ PRODUCT_SPECIFICATION : contains
+    PRODUCT ||--o{ PRODUCT_BOX_CONTENT : includes
+    PRODUCT ||--o{ RELATED_PRODUCT : recommends
+    PRODUCT ||--o{ RELATED_PRODUCT : recommended_by
+    STOREFRONT_CATEGORY ||--o{ STOREFRONT_CATEGORY_PRODUCT : features
+    PRODUCT ||--o{ STOREFRONT_CATEGORY_PRODUCT : appears_in
 
-    USER {
+    APP_USER {
         BIGINT user_id PK
         VARCHAR username
         VARCHAR email
         VARCHAR password
         VARCHAR role
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
     }
 
     PRODUCT {
         BIGINT product_id PK
+        VARCHAR slug UK
         VARCHAR name
-        DOUBLE price
-        VARCHAR description
-        INT stock
+        NUMERIC price
+        TEXT description
+        INTEGER stock
         VARCHAR category
+        TEXT image_url
+        TEXT image_alt
+        NUMERIC rating
+        INTEGER review_count
+        VARCHAR badge
+        VARCHAR badge_tone
+        TEXT specs
+        VARCHAR series
+        VARCHAR subcategory
+        JSONB attributes
+        TEXT_ARRAY connectivities
+        TEXT_ARRAY finishes
+        BOOLEAN in_stock
+        BOOLEAN noise_cancelling
     }
 
     CART {
         BIGINT id PK
         BIGINT user_id FK
         BIGINT product_id FK
-        INT quantity
+        INTEGER quantity
         VARCHAR status
     }
 
     ORDERS {
         BIGINT id PK
         BIGINT user_id FK
-        DOUBLE total_price
-        DATETIME order_date
+        NUMERIC total_price
+        TIMESTAMP order_date
         VARCHAR status
+    }
+
+    STOREFRONT_CATEGORY {
+        BIGINT category_id PK
+        VARCHAR slug UK
+        VARCHAR name
+        VARCHAR eyebrow
+        TEXT description
+        VARCHAR unit_label
+        TEXT image_url
+        SMALLINT display_order
+    }
+
+    STOREFRONT_CATEGORY_PRODUCT {
+        BIGINT category_id PK, FK
+        BIGINT product_id PK, FK
+        SMALLINT display_order
+    }
+
+    PRODUCT_GALLERY {
+        BIGINT image_id PK
+        BIGINT product_id FK
+        TEXT image_url
+        TEXT alt_text
+        VARCHAR label
+        SMALLINT display_order
+    }
+
+    PRODUCT_SPECIFICATION_GROUP {
+        BIGINT group_id PK
+        BIGINT product_id FK
+        VARCHAR group_name
+        VARCHAR title
+        SMALLINT display_order
+    }
+
+    PRODUCT_SPECIFICATION {
+        BIGINT specification_id PK
+        BIGINT group_id FK
+        VARCHAR specification_name
+        TEXT specification_value
+        SMALLINT display_order
+    }
+
+    PRODUCT_BOX_CONTENT {
+        BIGINT content_id PK
+        BIGINT product_id FK
+        VARCHAR title
+        TEXT description
+        VARCHAR icon
+        SMALLINT display_order
+    }
+
+    PRODUCT_REVIEW {
+        BIGINT review_id PK
+        BIGINT product_id FK
+        BIGINT user_id FK
+        VARCHAR initials
+        VARCHAR reviewer_name
+        VARCHAR reviewer_role
+        BOOLEAN is_verified
+        VARCHAR review_title
+        TEXT review_body
+        TIMESTAMPTZ reviewed_at
+    }
+
+    RELATED_PRODUCT {
+        BIGINT product_id PK, FK
+        BIGINT related_product_id PK, FK
+        SMALLINT display_order
     }

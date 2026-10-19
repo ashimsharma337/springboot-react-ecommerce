@@ -1,44 +1,114 @@
 # Database
 
-This directory contains database reference artifacts for the Spring Boot backend:
+These PostgreSQL scripts model the Spring Boot commerce entities and the catalog
+data in `ecommercefrontend/src/data`.
 
-- [`schema.sql`](schema.sql): repeatable baseline DDL for a clean PostgreSQL database.
-- [`seed.sql`](seed.sql): repeatable sample electronics catalog, demo accounts, carts, and orders.
-- [`erd.mmd`](erd.mmd): Mermaid ER diagram source for the current JPA model.
+## File naming and versioning
 
-## Current Configuration
+The `V` in a filename such as `V001__create_core_tables.sql` means **version**.
+It is a naming convention used by database migration tools, not a PostgreSQL
+keyword. The digits define the migration's order, and the double underscore
+separates the version from its description. A migration tool such as Flyway can
+discover these files in its configured migration directory, compare their
+versions with its schema history table, and apply only versions that have not
+already run.
 
-The backend connects to PostgreSQL using `jdbc:postgresql://localhost:5432/ecommerce_backend`. Hibernate uses the `ecommerce` schema, created by `schema.sql`. The local defaults in `EcommerceBackend/src/main/resources/application.properties` are username `postgres` and password `password`. Override them with the `DB_URL`, `DB_USERNAME`, and `DB_PASSWORD` environment variables for your machine; do not commit real credentials.
+This repository does not currently configure Flyway or another migration
+runner. For now, the `V` prefix helps people identify and order the versioned
+schema scripts; when applying them manually in pgAdmin, run the sequence below
+once, in order. Do not rerun completed scripts as a way to upgrade a changed
+database. A future change should be added as a new, higher-numbered migration.
 
-The project currently uses `spring.jpa.hibernate.ddl-auto=update`. Hibernate may create or alter tables when the application starts, but this is not a versioned migration history. The DDL in this folder is a baseline/reference and should be reviewed against the live database before applying it to an existing environment.
+The current files are organized as follows:
 
-## Fresh Database
+1. [`V001__create_core_tables.sql`](V001__create_core_tables.sql) contains all
+   `CREATE TABLE` statements and creates the complete core and storefront schema.
+   Columns that may be added to older installations are also included here for
+   fresh databases.
+2. [`V002__create_alter.sql`](V002__create_alter.sql) contains only `ALTER TABLE`
+   statements and guarded constraint additions. It upgrades the original core
+   tables without defining or creating tables.
+3. [`V003__create_indexes.sql`](V003__create_indexes.sql) adds catalog, lookup,
+   and relationship indexes.
+4. [`V004__create_functions.sql`](V004__create_functions.sql) creates the shared
+   audit timestamp and product slug functions.
+5. [`V005__create_triggers.sql`](V005__create_triggers.sql) attaches those
+   functions to the relevant tables.
+6. [`V006__add_database_comments.sql`](V006__add_database_comments.sql) adds
+   descriptions to PostgreSQL metadata for pgAdmin and other database tools.
+7. [`V007__add_product_attributes_jsonb.sql`](V007__add_product_attributes_jsonb.sql)
+   adds flexible, queryable technical attributes to products. It is safe to run
+   after V006 and harmless if V001-V006 have already created the same field/index.
 
-With PostgreSQL running, create the database and apply the baseline schema. The `createdb` command creates the database; `schema.sql` creates the `ecommerce` schema and its tables:
+[`seed.sql`](seed.sql) is a repeatable local-development seed script with at
+least 50 products, storefront categories, Studio One details, demo users, carts,
+and orders; do not use its demo accounts in production.
+[`erd.mmd`](erd.mmd) is the ER diagram source.
 
-```sh
-createdb -U postgres ecommerce_backend
-psql -U postgres -d ecommerce_backend -f database/schema.sql
-psql -U postgres -d ecommerce_backend -f database/seed.sql
+Catalog columns on `product` store the TypeScript product card data, including the
+slug, image/alt text, badge/tone, summary specs, rating/count, availability, audio
+series, subcategory, connectivity options, and finishes. PostgreSQL `NUMERIC` is
+used for money and ratings, `TEXT` for long descriptions, `BOOLEAN` for flags,
+`TIMESTAMPTZ` for audit/review timestamps, and `TEXT[]` for product connectivity
+and finish lists. Product details that naturally repeat are normalized into
+gallery, specification group/item, box-content, review, storefront-category, and
+related-product tables. Category/product links preserve curated storefront order.
+`product.attributes` uses `JSONB` for category-specific technical properties
+whose keys vary between products (for example, driver size, panel refresh rate,
+or connector type); its GIN index supports JSONB containment/path queries.
+Structured specification sections remain in their normalized tables rather than
+being duplicated in the JSON document. Plain `JSON` is not used because these
+application attributes need efficient querying and indexing, not preservation of
+the original JSON text formatting or key order.
+
+The current JPA product and order entities use `BigDecimal` for monetary values;
+`orders.order_date` remains `TIMESTAMP(6)` to match the backend's `LocalDateTime`.
+The original `category` column remains on `product` for compatibility with the
+existing API.
+
+## Execute in pgAdmin
+
+Create or select the target database in pgAdmin, open Query Tool, then execute
+each numbered migration in order. Run the entire contents of one file, wait for
+it to complete successfully, and only then run the next file:
+
+```text
+V001__create_core_tables.sql
+V002__create_alter.sql
+V003__create_indexes.sql
+V004__create_functions.sql
+V005__create_triggers.sql
+V006__add_database_comments.sql
+V007__add_product_attributes_jsonb.sql
 ```
 
-The seed script adds 8 demo users, 30 electronics products, 12 active cart entries, and 12 sample orders. It can be run again without duplicating those rows and refreshes passwords for its exact demo username/email pairs. All demo accounts share the password `password`; for example, log in as `alexchen` or `techadmin`. These accounts are for local development only; change or remove them before using the database outside local development.
+Apply this sequence once to a new database, or to a database containing only the
+original four-table schema. V001 creates all tables and includes the full set of
+current columns. V002 repeats the required legacy column changes with
+`IF NOT EXISTS`, so it also runs successfully after V001 on a fresh database;
+it contains no table-creation statements. The sequence is not intended to be
+replayed after it has completed: keep a deployment record and do not rerun old
+migration files. If a prior version of the expanded schema has already been
+applied, inspect the live database and prepare a new forward-only migration
+rather than running this sequence over it.
 
-Then make sure the datasource environment variables match your PostgreSQL connection. Start the backend from the repository root with:
+Back up existing data before migrating. V002 converts existing `DOUBLE PRECISION`
+prices to two-decimal `NUMERIC`; review unusual legacy values before applying to
+shared or production data. V007 also works as a standalone forward migration for
+a database that has already completed V006. Run `seed.sql` after V007 for local
+development only.
 
-```sh
-cd EcommerceBackend
-sh ./mvnw spring-boot:run
-```
+For command-line use, the same files can be applied with `psql -f` one at a time
+in the listed order. The backend connects to
+`jdbc:postgresql://localhost:5432/ecommerce_backend`.
 
-## Model Notes
+The Spring datasource can be configured with `DB_URL`, `DB_USERNAME`, and
+`DB_PASSWORD`; local defaults are in
+[`application.properties`](../EcommerceBackend/src/main/resources/application.properties).
+Hibernate currently uses `ddl-auto=update`; the numbered scripts are the explicit
+manual migration path. For automated production deployments, use Flyway or
+Liquibase to track applied migration versions rather than manually replaying SQL.
 
-- `app_user`, `product`, `cart`, and `orders` are mapped from the JPA entity classes in the `ecommerce` schema.
-- `cart.user_id`, `cart.product_id`, and `orders.user_id` are nullable because the current `@ManyToOne` mappings do not require a relationship.
-- String columns use JPA's default `VARCHAR(255)` length; numeric and date types follow the entity field types.
-- No uniqueness constraints, cascade rules, or delete actions are declared in the entity model. In particular, `email` is not currently unique at the database level.
-- `price` and `total_price` use Java `Double` in the current model. For financial amounts, plan a deliberate migration to `DECIMAL` and a suitable Java decimal type before relying on exact currency arithmetic.
-
-## Schema Change Practice
-
-For local development, keep this baseline aligned with entity changes. Before a schema change in a shared or production environment, take a database backup, write and review a forward migration, test it against a copy of representative data, and deploy the migration before or alongside the application change. This repository does not currently include Flyway or Liquibase, so do not treat `schema.sql` as an ordered migration log.
+The seed contains development-only accounts that share the password
+`password`. Change or remove them before using the database outside local
+development.

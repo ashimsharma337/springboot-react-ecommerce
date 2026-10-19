@@ -1,5 +1,7 @@
 package com.ashim.entity;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,7 +26,7 @@ public class Product {
 	private String name;
 
 	@Column(name="price")
-	private Double price;
+	private BigDecimal price;
 
 	@Column(name="description")
 	private String description;
