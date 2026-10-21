@@ -1,0 +1,15 @@
+meta {
+  name: Search Catalog Products
+  type: http
+  seq: 20
+}
+
+get {
+  url: {{baseUrl}}/api/products?category=premium-audio&subcategory=over-ear%20monitors&inStock=true&minPrice=100&maxPrice=500&search=studio
+  body: none
+  auth: none
+}
+
+headers {
+  Accept: application/json
+}

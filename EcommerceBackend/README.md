@@ -112,8 +112,13 @@ The data layer is built with JPA entities and repository interfaces. This keeps 
 #### Product
 
 - Table: `product`
-- Fields: `id`, `name`, `price`, `description`, `stock`, `category`
-- Used for catalog management
+- Includes storefront fields such as `slug`, `imageUrl`, `rating`, `badge`, `specs`,
+  inventory flags, and category-specific JSONB `attributes`
+- `price` uses `BigDecimal`; `connectivities` and `finishes` map to PostgreSQL text arrays
+- Catalog detail is normalized into `product_gallery`, `product_specification_group`,
+  `product_specification`, `product_box_content`, `product_review`, and `related_product`
+- Curated category cards and their ordered product links use
+  `storefront_category` and `storefront_category_product`
 
 #### Cart
 
@@ -129,12 +134,15 @@ The data layer is built with JPA entities and repository interfaces. This keeps 
 
 ### Repository layer
 
-The repository interfaces extend `JpaRepository<T, Long>`:
+The core repository interfaces extend `JpaRepository<T, Long>`:
 
 - `IUserRepository`
 - `IProductRepository`
 - `ICartRepository`
 - `IOrderRepository`
+
+Catalog repositories also provide ordered reads for storefront categories, gallery
+images, specifications, package contents, reviews, and related products.
 
 Examples:
 
@@ -157,11 +165,9 @@ The service layer contains the business logic. It sits between controllers and r
 
 ### Product service
 
-- Creates products
-- Reads product details
-- Lists all products
-- Updates product information
-- Deletes products
+- Creates, reads, updates, and deletes products
+- Generates normalized product slugs when omitted and initializes JSON/array catalog fields
+- Provides catalog filtering and product detail responses without serializing lazy JPA entities
 
 ### Cart service
 
@@ -201,7 +207,11 @@ Base path: `/api/products`
 
 - `POST /api/products` — create a product
 - `GET /api/products/{id}` — fetch product by ID
-- `GET /api/products` — list all products
+- `GET /api/products` — list catalog products; optional filters: `category`, `subcategory`,
+  `inStock`, `minPrice`, `maxPrice`, and `search`
+- `GET /api/products/slug/{slug}` — product details with gallery, specifications,
+  package contents, reviews, and related products
+- `GET /api/storefront/categories` — curated categories with their ordered products
 - `PUT /api/products/{id}` — update product
 - `DELETE /api/products/{id}` — delete product
 
@@ -224,7 +234,8 @@ Base path: `/api/orders`
 - `PUT /api/orders/{id}` — update an order
 - `DELETE /api/orders/{id}` — delete order
 
-All controller methods return either domain entities directly or `ResponseEntity<T>` for status-aware responses.
+Catalog list and detail routes return DTOs so lazy database relationships are not exposed
+directly. Existing CRUD routes continue to return their domain entities.
 
 ## 8. Exception Layer
 
@@ -250,6 +261,8 @@ Examples:
 - `@ExceptionHandler(IllegalArgumentException.class)`
 
 These methods return a `ResponseEntity` with the proper HTTP status and message.
+Not-found errors use HTTP 404, invalid input uses HTTP 400, and database constraint
+conflicts use HTTP 409.
 
 ## 9. Security and Configuration
 
@@ -262,11 +275,16 @@ It configures:
 - CSRF disabled for API usage
 - CORS enabled
 - unrestricted access for `/api/users` and `/api/users/login`
-- all other routes require authentication
+- public access for catalog GET routes (`/api/products`, product details, and storefront categories)
+- authentication required for catalog mutations and other protected routes
 - stateless sessions
 - JWT filter added before the username/password authentication filter
 - password encoder bean using BCrypt
 - authentication manager bean
+
+Hibernate schema handling is set to `validate`: apply the numbered SQL scripts in
+`../database` before starting the API. Hibernate checks mappings against the migrated
+schema rather than silently mutating it.
 
 ### JWT flow
 
@@ -390,9 +408,11 @@ This arrangement is a classic frontend-backend separation:
 
 ## 13. Practical Notes
 
-- The project directly returns JPA entity objects in most controllers rather than DTOs.
-- This is simple and fast for learning, but in production, DTOs are often preferred to decouple API contracts from database entities.
-- The current implementation uses `spring.jpa.hibernate.ddl-auto=update`, which is convenient for development but not a full migration strategy for production.
+- Core CRUD endpoints still return JPA entities; storefront catalog endpoints use DTOs to
+  avoid exposing lazy persistence relationships.
+- Apply the numbered PostgreSQL scripts in `../database` before starting the API.
+- Hibernate uses `spring.jpa.hibernate.ddl-auto=validate` so the running application checks
+  the schema without changing it.
 - The architecture is clear and easy to understand because each layer has a single responsibility.
 
 ## 14. Run the Project
