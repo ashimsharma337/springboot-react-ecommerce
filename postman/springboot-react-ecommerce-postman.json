@@ -239,6 +239,82 @@
           "response": []
         },
         {
+          "name": "Search Catalog Products",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products?category=premium-audio&subcategory=over-ear%20monitors&inStock=true&minPrice=100&maxPrice=500&search=studio",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "premium-audio"
+                },
+                {
+                  "key": "subcategory",
+                  "value": "over-ear monitors"
+                },
+                {
+                  "key": "inStock",
+                  "value": "true"
+                },
+                {
+                  "key": "minPrice",
+                  "value": "100"
+                },
+                {
+                  "key": "maxPrice",
+                  "value": "500"
+                },
+                {
+                  "key": "search",
+                  "value": "studio"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Product Details By Slug",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/slug/studio-one-headphone",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "slug",
+                "studio-one-headphone"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "Get Product By ID",
           "request": {
             "method": "GET",
@@ -286,7 +362,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Wireless Mouse\",\n  \"price\": 49.99,\n  \"description\": \"Ergonomic wireless mouse for office use\",\n  \"stock\": 120,\n  \"category\": \"Accessories\"\n}",
+              "raw": "{\n  \"slug\": \"wireless-studio-headphones\",\n  \"name\": \"Wireless Studio Headphones\",\n  \"category\": \"Audio & Sound\",\n  \"subcategory\": \"Over-Ear Monitors\",\n  \"description\": \"Wireless headphones for studio monitoring\",\n  \"imageUrl\": \"https://example.com/images/wireless-studio-headphones.jpg\",\n  \"imageAlt\": \"Wireless studio headphones\",\n  \"price\": 349.99,\n  \"rating\": 4.8,\n  \"reviewCount\": 24,\n  \"badge\": \"NEW RELEASE\",\n  \"badgeTone\": \"blue\",\n  \"specs\": \"Bluetooth 5.4 - 40mm drivers\",\n  \"series\": \"Studio\",\n  \"attributes\": {\n    \"driverSize\": \"40mm\",\n    \"wireless\": true\n  },\n  \"connectivities\": [\"Bluetooth\", \"USB-C\"],\n  \"finishes\": [\"Black\"],\n  \"stock\": 120,\n  \"inStock\": true,\n  \"noiseCancelling\": true\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -324,7 +400,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"id\": 1,\n  \"name\": \"Updated Laptop\",\n  \"price\": 1299.99,\n  \"description\": \"Updated description for the laptop\",\n  \"stock\": 25,\n  \"category\": \"Electronics\"\n}",
+              "raw": "{\n  \"id\": 1,\n  \"slug\": \"updated-studio-headphones\",\n  \"name\": \"Updated Studio Headphones\",\n  \"category\": \"Audio & Sound\",\n  \"subcategory\": \"Over-Ear Monitors\",\n  \"price\": 1299.99,\n  \"description\": \"Updated description for the studio headphones\",\n  \"imageUrl\": \"https://example.com/images/updated-studio-headphones.jpg\",\n  \"imageAlt\": \"Updated studio headphones\",\n  \"rating\": 4.9,\n  \"reviewCount\": 32,\n  \"badge\": \"BESTSELLER\",\n  \"badgeTone\": \"dark\",\n  \"specs\": \"Bluetooth 5.4 - 55-hour battery\",\n  \"series\": \"Studio\",\n  \"attributes\": {\n    \"driverSize\": \"40mm\",\n    \"wireless\": true\n  },\n  \"connectivities\": [\"Bluetooth\", \"USB-C\"],\n  \"finishes\": [\"Black\", \"Silver\"],\n  \"stock\": 25,\n  \"inStock\": true,\n  \"noiseCancelling\": true\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -370,6 +446,36 @@
                 "api",
                 "products",
                 "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Storefront",
+      "item": [
+        {
+          "name": "Get Storefront Categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/storefront/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "storefront",
+                "categories"
               ]
             }
           },

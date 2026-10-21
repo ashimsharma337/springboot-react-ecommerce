@@ -2,6 +2,7 @@ package com.ashim.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,5 +35,11 @@ public class Order {
 
 	@Column(name = "status")
 	private String status;
+
+	@Column(name = "created_at", insertable = false, updatable = false)
+	private OffsetDateTime createdAt;
+
+	@Column(name = "updated_at", insertable = false, updatable = false)
+	private OffsetDateTime updatedAt;
 
 }

@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -39,6 +40,9 @@ public class SecurityConfig {
 			.csrf(AbstractHttpConfigurer::disable)
 			.cors(Customizer.withDefaults())
 			.authorizeHttpRequests(request -> request
+					.requestMatchers(HttpMethod.GET, "/api/products", "/api/products/slug/**",
+							"/api/storefront/categories/**")
+					.permitAll()
 					.requestMatchers("/api/users", "/api/users/login")
 					.permitAll()
 					.anyRequest().authenticated())
@@ -74,7 +78,7 @@ public class SecurityConfig {
 		config.setAllowCredentials(true);
 		config.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
 		config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
-		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
 		source.registerCorsConfiguration("/**", config);
 		return new CorsFilter(source);
 	}

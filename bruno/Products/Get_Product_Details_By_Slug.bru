@@ -1,0 +1,15 @@
+meta {
+  name: Get Product Details By Slug
+  type: http
+  seq: 21
+}
+
+get {
+  url: {{baseUrl}}/api/products/slug/studio-one-headphone
+  body: none
+  auth: none
+}
+
+headers {
+  Accept: application/json
+}

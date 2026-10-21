@@ -1,5 +1,6 @@
 package com.ashim.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -11,9 +12,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ashim.dto.ProductCatalogResponse.ProductDetailResponse;
+import com.ashim.dto.ProductCatalogResponse.ProductResponse;
 import com.ashim.entity.Product;
+import com.ashim.service.ProductCatalogService;
 import com.ashim.service.ProductServiceImpl;
 
 @RestController
@@ -21,11 +26,13 @@ import com.ashim.service.ProductServiceImpl;
 public class ProductController {
 
 	private final ProductServiceImpl productService;
+	private final ProductCatalogService catalogService;
 
 	private final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
-	public ProductController(ProductServiceImpl productService) {
+	public ProductController(ProductServiceImpl productService, ProductCatalogService catalogService) {
 		this.productService = productService;
+		this.catalogService = catalogService;
 	}
 
 
@@ -42,14 +49,25 @@ public class ProductController {
 	}
 
 	@GetMapping()
-	public List<Product> getAllProducts() {
+	public List<ProductResponse> getAllProducts(
+			@RequestParam(required = false) String category,
+			@RequestParam(required = false) String subcategory,
+			@RequestParam(required = false) Boolean inStock,
+			@RequestParam(required = false) BigDecimal minPrice,
+			@RequestParam(required = false) BigDecimal maxPrice,
+			@RequestParam(required = false) String search) {
 		logger.info("GET request received for all products: Fetching all products....");
-		return productService.getAllProducts();
+		return catalogService.searchProducts(category, subcategory, inStock, minPrice, maxPrice, search);
+	}
+
+	@GetMapping("/slug/{slug}")
+	public ProductDetailResponse getProductDetailsBySlug(@PathVariable String slug) {
+		return catalogService.getProductDetails(slug);
 	}
 
 	@PutMapping("/{id}")
 	public Product updateProduct(@PathVariable Long id, @RequestBody Product updatedProduct) {
-		logger.info("PUT request received: Updating product with id ", updatedProduct.getId());
+		logger.info("PUT request received: Updating product with id {}", id);
 		if(!id.equals(updatedProduct.getId())) {
 			throw new IllegalArgumentException("Id provided does not match with existing product id!");
 		}
@@ -58,7 +76,7 @@ public class ProductController {
 
 	@DeleteMapping("/{id}")
 	public String deleteStudentById(@PathVariable Long id) {
-		logger.info("DELETE request received: deleting product with id ", id);
+		logger.info("DELETE request received: deleting product with id {}", id);
 		return productService.deleteProductById(id);
 	}
 
