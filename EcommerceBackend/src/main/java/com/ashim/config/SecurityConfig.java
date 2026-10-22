@@ -40,7 +40,7 @@ public class SecurityConfig {
 			.csrf(AbstractHttpConfigurer::disable)
 			.cors(Customizer.withDefaults())
 			.authorizeHttpRequests(request -> request
-					.requestMatchers(HttpMethod.GET, "/api/products", "/api/products/slug/**",
+					.requestMatchers(HttpMethod.GET, "/api/products", "/api/products/**",
 							"/api/storefront/categories/**")
 					.permitAll()
 					.requestMatchers("/api/users", "/api/users/login")
